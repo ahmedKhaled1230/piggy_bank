@@ -55,9 +55,9 @@ int main(void) {
             case 2: takeCoins(); break;
             case 3: showBank(); break;
             case 4: buyToy(); break;
-            case 5: bankReport(); break;
+            case 5: bankReport(); break;*/
             case 0: break;
-            */
+            
             default: printf("Unknown option!\n"); break;
         }
         if (choice==0){
@@ -89,4 +89,21 @@ static void addCoins(void) {
     }
     coinCount[coin] += (uint16_t)qty;
 }
-
+static void takeCoins(void) {
+    int coin, qty;
+    printf("Which coin (0-4)? ");
+    if (scanf("%d", &coin) != 1 || coin < 0 || coin >= COIN_KINDS) {
+        printf("Invalid coin!\n");
+        return;
+    }
+    printf("How many? ");
+    if (scanf("%d", &qty) != 1 || qty < 0) {
+        printf("Invalid number!\n");
+        return;
+    }
+    if (coinCount[coin] < (uint16_t)qty) {
+        printf("Not enough coins!\n");
+        return;
+    }
+    coinCount[coin] -= (uint16_t)qty;
+}
