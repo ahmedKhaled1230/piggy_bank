@@ -29,11 +29,12 @@ static void     showBank(void);
 static void     drawBar(uint16_t value, uint16_t full, uint8_t width);
 static void     buyToy(void);
 static void     bankReport(void);
+static void     clearInput(void);
 
 int main(void) {
     seedBank();
     unsigned short int choice;
-    while(1) {
+    do {
         printf("\nMenu:\n");
         printf("1. Add coins\n");
         printf("2. Take coins\n");
@@ -44,9 +45,8 @@ int main(void) {
         printf("Choice: ");
         if (scanf("%hu", &choice) != 1 || choice > 5) {
             printf("Invalid input!\n");
-            while(getchar()!='\n'); // clear the input buffer
+            clearInput();
             continue;
-
         }
         switch (choice) {
             case 1: addCoins(); break;
@@ -59,9 +59,9 @@ int main(void) {
             default: printf("Unknown option!\n"); break;
         }
         if (choice==0){
-            break;
+            printf("Goodbye!\n");
         }
-    } 
+    } while (choice != 0);
     return 0;
 }
 static void seedBank(void) {
@@ -76,13 +76,15 @@ static void seedBank(void) {
 static void addCoins(void) {
     int coin, qty;
     printf("Which coin (0-4)? ");
-    if (scanf("%d", &coin) != 1 || coin < 0 || coin >= COIN_KINDS) {
+    if (scanf("%d", &coin) != 1 || coin < 0 || coin >= (int)COIN_KINDS) {
         printf("Invalid coin!\n");
+        clearInput();
         return;
     }
     printf("How many? ");
     if (scanf("%d", &qty) != 1 || qty < 0) {
         printf("Invalid number!\n");
+        clearInput();
         return;
     }
     coinCount[coin] += (uint16_t)qty;
@@ -90,13 +92,15 @@ static void addCoins(void) {
 static void takeCoins(void) {
     int coin, qty;
     printf("Which coin (0-4)? ");
-    if (scanf("%d", &coin) != 1 || coin < 0 || coin >= COIN_KINDS) {
+    if (scanf("%d", &coin) != 1 || coin < 0 || coin >= (int)COIN_KINDS) {
         printf("Invalid coin!\n");
+        clearInput();
         return;
     }
     printf("How many? ");
     if (scanf("%d", &qty) != 1 || qty < 0) {
         printf("Invalid number!\n");
+        clearInput();
         return;
     }
     if (coinCount[coin] < (uint16_t)qty) {
@@ -145,8 +149,9 @@ static void buyToy(void) {
     }
     int choice;
     printf("Which toy? ");
-    if (scanf("%d", &choice) != 1 || choice < 0 || choice >= TOY_COUNT) {
+    if (scanf("%d", &choice) != 1 || choice < 0 || choice >= (int)TOY_COUNT) {
         printf("Invalid choice!\n");
+        clearInput();
         return;
     }
     uint32_t total = bankTotal();
@@ -161,13 +166,22 @@ static void bankReport(void) {
     uint32_t total = bankTotal();
     uint32_t coins = sumCoins(coinCount, COIN_KINDS);
     uint8_t biggest = biggestPile();
+    uint8_t affordable = 0;
     printf("Total money: %u\n", total);
     printf("Total coins: %u\n", coins);
     printf("Tallest pile: %u piastres (%u coins)\n", COIN_VALUE[biggest], coinCount[biggest]);
     printf("Toys affordable today:\n");
     for (uint8_t i = 0; i < TOY_COUNT; i++) {
         if (total >= shop[i].price) {
+            affordable++;
             printf(" - %s\n", shop[i].name);
         }
+    }
+    printf("Affordable toys: %u of %u\n", affordable, TOY_COUNT);
+}
+
+static void clearInput(void) {
+    int character;
+    while ((character = getchar()) != '\n' && character != EOF) {
     }
 }
