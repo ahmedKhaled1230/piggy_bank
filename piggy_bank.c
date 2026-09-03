@@ -118,3 +118,19 @@ static uint32_t bankTotal(void) {
 static uint32_t sumCoins(const uint16_t *counts, uint8_t n) {
     if (n == 0) return 0;
     return counts[n-1] + sumCoins(counts, n-1);
+}
+static uint8_t biggestPile(void) {
+    uint8_t pos = 0;
+    for (uint8_t i = 1; i < COIN_KINDS; i++) {
+        if (coinCount[i] > coinCount[pos]) {
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+static void drawBar(uint16_t value, uint16_t full, uint8_t width) {
+    uint8_t filled = (value >= full) ? width : (uint8_t)((value * width) / full);
+    for (uint8_t i = 0; i < filled; i++) putchar('#');
+    for (uint8_t i = filled; i < width; i++) putchar('-');
+}
