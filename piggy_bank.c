@@ -134,3 +134,10 @@ static void drawBar(uint16_t value, uint16_t full, uint8_t width) {
     for (uint8_t i = 0; i < filled; i++) putchar('#');
     for (uint8_t i = filled; i < width; i++) putchar('-');
 }
+static void showBank(void) {
+    for (uint8_t i = 0; i < COIN_KINDS; i++) {
+        printf("%3u piastres: %3u | ", COIN_VALUE[i], coinCount[i]);
+        drawBar(coinCount[i], 10, 10);
+        putchar('\n');
+    }
+}
