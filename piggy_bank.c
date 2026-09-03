@@ -107,3 +107,14 @@ static void takeCoins(void) {
     }
     coinCount[coin] -= (uint16_t)qty;
 }
+static uint32_t bankTotal(void) {
+    uint32_t total = 0;
+    for (uint8_t i = 0; i < COIN_KINDS; i++) {
+        total += coinCount[i] * COIN_VALUE[i];
+    }
+    return total;
+}
+
+static uint32_t sumCoins(const uint16_t *counts, uint8_t n) {
+    if (n == 0) return 0;
+    return counts[n-1] + sumCoins(counts, n-1);
