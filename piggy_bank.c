@@ -21,7 +21,6 @@ static Toy_t shop[TOY_COUNT];
 
 static void     seedBank(void);
 static void     addCoins(void);
-/*
 static void     takeCoins(void);
 static uint32_t bankTotal(void);
 static uint32_t sumCoins(const uint16_t *counts, uint8_t n);
@@ -30,7 +29,7 @@ static void     showBank(void);
 static void     drawBar(uint16_t value, uint16_t full, uint8_t width);
 static void     buyToy(void);
 static void     bankReport(void);
-*/
+
 int main(void) {
     seedBank();
     unsigned short int choice;
@@ -51,11 +50,10 @@ int main(void) {
         }
         switch (choice) {
             case 1: addCoins(); break;
-            /*
             case 2: takeCoins(); break;
             case 3: showBank(); break;
             case 4: buyToy(); break;
-            case 5: bankReport(); break;*/
+            case 5: bankReport(); break;
             case 0: break;
             
             default: printf("Unknown option!\n"); break;
@@ -139,5 +137,37 @@ static void showBank(void) {
         printf("%3u piastres: %3u | ", COIN_VALUE[i], coinCount[i]);
         drawBar(coinCount[i], 10, 10);
         putchar('\n');
+    }
+}
+static void buyToy(void) {
+    for (uint8_t i = 0; i < TOY_COUNT; i++) {
+        printf("%u: %s (%u)\n", i, shop[i].name, shop[i].price);
+    }
+    int choice;
+    printf("Which toy? ");
+    if (scanf("%d", &choice) != 1 || choice < 0 || choice >= TOY_COUNT) {
+        printf("Invalid choice!\n");
+        return;
+    }
+    uint32_t total = bankTotal();
+    if (total >= shop[choice].price) {
+        printf("You can buy %s! Leftover: %u\n", shop[choice].name, total - shop[choice].price);
+    } else {
+        printf("Not enough! Need %u more.\n", shop[choice].price - total);
+    }
+}
+
+static void bankReport(void) {
+    uint32_t total = bankTotal();
+    uint32_t coins = sumCoins(coinCount, COIN_KINDS);
+    uint8_t biggest = biggestPile();
+    printf("Total money: %u\n", total);
+    printf("Total coins: %u\n", coins);
+    printf("Tallest pile: %u piastres (%u coins)\n", COIN_VALUE[biggest], coinCount[biggest]);
+    printf("Toys affordable today:\n");
+    for (uint8_t i = 0; i < TOY_COUNT; i++) {
+        if (total >= shop[i].price) {
+            printf(" - %s\n", shop[i].name);
+        }
     }
 }
